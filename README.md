@@ -54,4 +54,4 @@ catMedia/
 
 ## License
 
-No license has been selected yet. Until a license is added, all rights are reserved by the copyright holder.
+This project is licensed under the [MIT License](LICENSE).
