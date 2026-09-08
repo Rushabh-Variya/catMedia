@@ -1,0 +1,49 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build catMedia with vendored FFmpeg",
+			"type": "shell",
+			"command": "xcodebuild",
+			"args": [
+				"-project",
+				"catMedia.xcodeproj",
+				"-scheme",
+				"catMedia",
+				"-configuration",
+				"Debug",
+				"-sdk",
+				"iphonesimulator",
+				"CODE_SIGNING_ALLOWED=NO",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$xcode"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build catMedia generic simulator",
+			"type": "shell",
+			"command": "xcodebuild",
+			"args": [
+				"-project",
+				"catMedia.xcodeproj",
+				"-scheme",
+				"catMedia",
+				"-configuration",
+				"Debug",
+				"-destination",
+				"generic/platform=iOS Simulator",
+				"CODE_SIGNING_ALLOWED=NO",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$xcode"
+			],
+			"group": "build"
+		}
+	]
+}

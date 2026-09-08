@@ -8,10 +8,18 @@
 import SwiftUI
 
 @main
-struct catMediaApp: App {
+struct MediaConverterApp: App {
+    init() {
+        do {
+            _ = try FileService().ensureAppOutputDirectoryExists()
+        } catch {
+            print("[catMedia][FileService] Failed to create app output folder: \(error.localizedDescription)")
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainTabView()
         }
     }
 }
