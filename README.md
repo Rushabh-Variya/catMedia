@@ -1,4 +1,10 @@
-# catMedia
+<p align="center">
+  <img src="catMedia/Assets.xcassets/AppIcon.appiconset/catMediaDark-iOS-Default-1024x1024@1x.png" width="160" alt="catMedia app icon">
+</p>
+
+<h1 align="center">catMedia</h1>
+
+<p align="center">Offline media inspection, conversion, and extraction for iOS.</p>
 
 An offline iOS media utility for inspecting metadata, converting files, and extracting audio or video streams with FFmpeg.
 
