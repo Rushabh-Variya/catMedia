@@ -1,52 +1,57 @@
 # catMedia
 
-This app now uses official FFmpeg source from the upstream repository instead of third-party iOS wrapper packages.
+An offline iOS media utility for inspecting metadata, converting files, and extracting audio or video streams with FFmpeg.
 
-## Official FFmpeg iOS flow
+## Features
 
-1. Clone official FFmpeg:
+- Media metadata inspection through FFprobe
+- Conversion to supported MP4 presets
+- Video or audio stream extraction
+- Local processing with no cloud upload
+- Output files stored in the app's Documents directory
+- Dark, focused SwiftUI interface
+
+## Requirements
+
+- macOS with Xcode 16.4 or newer
+- iOS 16.0 or newer
+- Xcode command-line tools
+- An Apple Developer account for device installation
+
+## Setup
+
+1. Clone the repository.
+2. Open `catMedia.xcodeproj` in Xcode.
+3. Build the bundled FFmpeg libraries:
 
 ```bash
 scripts/ffmpeg/fetch_official_ffmpeg.sh
-```
-
-2. Build static iOS libraries (device + simulator):
-
-```bash
 scripts/ffmpeg/build_ios_minimal.sh
 ```
 
-This script performs the same flow you requested and uses a compatibility-first FFmpeg configure profile:
+4. Select the `catMedia` scheme and an iOS device or simulator.
+5. Build and run.
 
-- clone official FFmpeg
-- set iOS SDK and compiler
-- run `make clean`
-- run `./configure` for iOS cross-compile
-- run `make` and `make install`
+The FFmpeg build output is generated under `Vendor/FFmpeg/` and is intentionally ignored by Git because it contains generated libraries and can be rebuilt locally.
 
-The configure profile keeps FFmpeg/FFprobe enabled and does not force a tiny `--disable-everything` build, so broader media containers/codecs are usable.
+## Project structure
 
-The install output is created at:
+```text
+catMedia/
+├── Models/       Media metadata and conversion options
+├── Services/     FFmpeg, FFprobe, file, and output services
+├── ViewModels/   Async workflow and progress state
+├── Views/        SwiftUI screens and reusable UI components
+└── Utils/        Command construction helpers
+```
 
-- `Vendor/FFmpeg/FFmpeg/ios-build`
-- Device libs: `Vendor/FFmpeg/FFmpeg/ios-build/iphoneos/lib`
-- Simulator libs: `Vendor/FFmpeg/FFmpeg/ios-build/iphonesimulator/lib`
+## Development notes
 
-## Xcode integration
+- Keep media work off the main thread and publish UI state on the main actor.
+- Do not commit generated FFmpeg output, Xcode derived data, or local user settings.
+- Keep UI animation short, interruptible, and limited to purposeful feedback.
+- Test imports, metadata parsing, conversion, extraction, and output-file validation before release.
 
-Project settings are configured to use:
+## License
 
-- Header Search Paths: `$(PROJECT_DIR)/Vendor/FFmpeg/FFmpeg/ios-build/include`
-- Library Search Paths: `$(PROJECT_DIR)/Vendor/FFmpeg/FFmpeg/ios-build/$(PLATFORM_NAME)/lib`
-- Linker flags: `-lcatmediafftools -lavdevice -lavfilter -lavcodec -lavformat -lavutil -lswresample -lswscale -lz -lbz2 -liconv -lc++`
-
-## Wrapper and Swift bridge
-
-The project includes:
-
-- `catMedia/Services/OfficialFFmpegBridge.c`
-- `catMedia/Services/OfficialFFmpegBridge.h`
-- `catMedia/catMedia-Bridging-Header.h`
-- `catMedia/Services/OfficialFFmpegBridge.swift`
-
-`FFmpegCommandRunner` now executes through this local bridge instead of `FFmpeg-iOS`.
+No license has been selected yet. Until a license is added, all rights are reserved by the copyright holder.

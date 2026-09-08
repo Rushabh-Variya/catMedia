@@ -1,1 +1,21 @@
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Generated FFmpeg libraries
 Vendor/FFmpeg/
+
+# macOS
+.DS_Store
+
+# Local environment files
+.env
+.env.*
+!.env.example
