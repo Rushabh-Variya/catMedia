@@ -18,8 +18,7 @@ struct HomeView: View {
     }
 
     private var background: some View {
-        LinearGradient(colors: [Color(red: 0.02, green: 0.02, blue: 0.03), Color(red: 0.05, green: 0.05, blue: 0.06), Color(red: 0.08, green: 0.08, blue: 0.09)], startPoint: .top, endPoint: .bottom)
-            .overlay(alignment: .topTrailing) { Circle().fill(Color.white.opacity(0.03)).frame(width: 240, height: 240).blur(radius: 20).offset(x: 120, y: -100) }
+        Color.black
             .ignoresSafeArea()
     }
 

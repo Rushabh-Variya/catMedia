@@ -1,44 +1,87 @@
 import SwiftUI
 
 struct MainTabView: View {
-    enum Tab {
+    enum Tab: CaseIterable, Hashable {
         case home
         case mediaInfo
         case conversion
         case extract
+
+        var title: String {
+            switch self {
+            case .home: "Home"
+            case .mediaInfo: "Media Info"
+            case .conversion: "Conversion"
+            case .extract: "Extract"
+            }
+        }
+
+        var icon: String {
+            switch self {
+            case .home: "house.fill"
+            case .mediaInfo: "info.circle"
+            case .conversion: "arrow.triangle.2.circlepath"
+            case .extract: "scissors"
+            }
+        }
     }
 
     @State private var selectedTab: Tab = .home
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house.fill")
-                }
-                .tag(Tab.home)
+        ZStack {
+            Color.black.ignoresSafeArea()
 
-            MediaInfoView()
-                .tabItem {
-                    Label("Media Info", systemImage: "info.circle")
+            Group {
+                switch selectedTab {
+                case .home:
+                    HomeView()
+                case .mediaInfo:
+                    MediaInfoView()
+                case .conversion:
+                    MediaConverterView()
+                case .extract:
+                    MediaExtractView()
                 }
-                .tag(Tab.mediaInfo)
-
-            MediaConverterView()
-                .tabItem {
-                    Label("Conversion", systemImage: "arrow.triangle.2.circlepath")
-                }
-                .tag(Tab.conversion)
-
-            MediaExtractView()
-                .tabItem {
-                    Label("Extract", systemImage: "scissors")
-                }
-                .tag(Tab.extract)
+            }
+            .id(selectedTab)
+            .transition(.opacity.combined(with: .move(edge: .trailing)))
         }
-            .tint(.white)
-            .toolbarColorScheme(.dark, for: .tabBar)
-            .preferredColorScheme(.dark)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            tabBar
+        }
+        .animation(UIAnimation.easeOut, value: selectedTab)
+        .preferredColorScheme(.dark)
+    }
+
+    private var tabBar: some View {
+        HStack(spacing: 0) {
+            ForEach(Tab.allCases, id: \.self) { tab in
+                Button {
+                    selectedTab = tab
+                } label: {
+                    VStack(spacing: 4) {
+                        Image(systemName: tab.icon)
+                            .font(.subheadline.weight(.semibold))
+                        Text(tab.title)
+                            .font(.caption2.weight(.medium))
+                    }
+                    .foregroundStyle(selectedTab == tab ? .white : .white.opacity(0.48))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 48)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.top, 6)
+        .padding(.bottom, 4)
+        .background(Color.black)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(.white.opacity(0.10))
+                .frame(height: 1)
+        }
     }
 }
 
