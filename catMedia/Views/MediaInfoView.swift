@@ -29,6 +29,8 @@ struct MediaInfoView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
                 .padding(.bottom, 28)
+                .animation(UIAnimation.easeOut, value: showMetadata)
+                .animation(UIAnimation.easeOut, value: showOutput)
             }
             .background(Color.black)
             .navigationTitle("Media Info")
@@ -68,9 +70,6 @@ struct MediaInfoView: View {
             Text("Inspect media")
                 .font(.system(.largeTitle, design: .default).weight(.bold))
                 .foregroundStyle(.white)
-            Text("FFprobe metadata, plain output, no noise.")
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.60))
         }
     }
 
@@ -84,7 +83,7 @@ struct MediaInfoView: View {
                 Text(viewModel.statusMessage.isEmpty ? "Tap to inspect file" : viewModel.statusMessage).font(.footnote).foregroundStyle(.white.opacity(0.60))
             }.frame(maxWidth: .infinity).frame(minHeight: 210).padding(24).background(.white.opacity(0.03), in: RoundedRectangle(cornerRadius: 24, style: .continuous)).overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(.white.opacity(0.08), lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressableCard)
         .disabled(viewModel.isAnalyzing)
     }
 
@@ -92,21 +91,52 @@ struct MediaInfoView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Metadata").font(.headline.weight(.semibold)).foregroundStyle(.white)
             if let info = viewModel.mediaInfo {
-                flatRow("Audio", info.hasAudio ? "Yes" : "No")
-                Divider().overlay(.primary.opacity(0.08))
-                flatRow("Duration", info.durationText)
-                Divider().overlay(.primary.opacity(0.08))
-                flatRow("Resolution", info.resolutionText)
-                Divider().overlay(.primary.opacity(0.08))
-                flatRow("Video codec", info.videoCodecText)
-                Divider().overlay(.primary.opacity(0.08))
-                flatRow("Audio codec", info.audioCodecText)
-                Divider().overlay(.primary.opacity(0.08))
-                flatRow("Bitrate", info.bitrateText)
+                metadataSection("File") {
+                    flatRow("Name", info.fileName)
+                    flatRow("Extension", info.fileExtension.uppercased())
+                    flatRow("Format", info.formatName.uppercased())
+                    flatRow("Duration", info.durationText)
+                    flatRow("Bitrate", info.bitrateText)
+                }
+
+                if let video = info.videoStream {
+                    metadataSection("Video") {
+                        flatRow("Codec", info.videoCodecText)
+                        flatRow("Profile", video.profile ?? "N/A")
+                        flatRow("Resolution", info.resolutionText)
+                        flatRow("Pixel format", video.pixelFormat?.uppercased() ?? "N/A")
+                        flatRow("Bit depth", info.bitDepthText)
+                        flatRow("Bitrate", streamBitrateText(video))
+                        flatRow("Transparency", info.transparencyText)
+                    }
+                }
+
+                if let audio = info.audioStream {
+                    metadataSection("Audio") {
+                        flatRow("Codec", info.audioCodecText)
+                        flatRow("Profile", audio.profile ?? "N/A")
+                        flatRow("Sample rate", info.samplingRateText)
+                        flatRow("Channels", info.channelsText)
+                        flatRow("Bitrate", streamBitrateText(audio))
+                    }
+                }
             } else {
-                    Text("No metadata yet.").foregroundStyle(.white.opacity(0.60))
+                Text("No metadata yet.").foregroundStyle(.white.opacity(0.60))
             }
         }
+    }
+
+    @ViewBuilder
+    private func metadataSection<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.72))
+                .padding(.bottom, 4)
+
+            content()
+        }
+        .padding(.top, 4)
     }
 
     private var output: some View {
@@ -122,6 +152,16 @@ struct MediaInfoView: View {
                     }
                 }
                 .pickerStyle(.menu)
+
+                if let text = renderedOutputText {
+                    Button {
+                        UIPasteboard.general.string = text
+                        didCopyJSON = true
+                    } label: {
+                        Label("Copy", systemImage: "doc.on.doc")
+                    }
+                    .buttonStyle(.bordered)
+                }
             }
 
             if let text = renderedOutputText {
@@ -131,12 +171,6 @@ struct MediaInfoView: View {
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 8)
-
-                Button("Copy") {
-                    UIPasteboard.general.string = text
-                    didCopyJSON = true
-                }
-                .buttonStyle(.bordered)
 
                 if didCopyJSON {
                     Text("Copied.")
@@ -160,6 +194,11 @@ struct MediaInfoView: View {
                 .foregroundStyle(.white)
         }
         .font(.subheadline)
+    }
+
+    private func streamBitrateText(_ stream: MediaStream) -> String {
+        guard let bitrate = stream.bitrate, bitrate > 0 else { return "N/A" }
+        return "\(Int((Double(bitrate) / 1_000).rounded())) kb/s"
     }
 
     private var renderedOutputText: String? {

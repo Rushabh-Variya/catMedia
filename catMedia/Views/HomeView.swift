@@ -28,10 +28,6 @@ struct HomeView: View {
             Text("Media Converter")
                 .font(.system(.largeTitle, design: .default).weight(.bold))
                 .foregroundStyle(.white)
-
-            Text("Offline tools. Black glass UI. No cloud.")
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.60))
         }
         .padding(.top, 6)
     }

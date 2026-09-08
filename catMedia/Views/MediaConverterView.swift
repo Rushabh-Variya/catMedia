@@ -26,6 +26,8 @@ struct MediaConverterView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
                 .padding(.bottom, 28)
+                .animation(UIAnimation.easeOut, value: viewModel.importedFileURL != nil)
+                .animation(UIAnimation.easeOut, value: viewModel.outputURL != nil)
             }
             .background(Color.black)
             .navigationTitle("Conversion")
@@ -65,9 +67,6 @@ struct MediaConverterView: View {
             Text("Convert media")
                 .font(.system(.largeTitle, design: .default).weight(.bold))
                 .foregroundStyle(.white)
-            Text("Offline FFmpeg presets only. Clean flow, no command box.")
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.60))
         }
     }
 
@@ -93,7 +92,7 @@ struct MediaConverterView: View {
             .background(.white.opacity(0.03), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(.white.opacity(0.08), lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressableCard)
         .disabled(viewModel.isAnalyzing || viewModel.isConverting)
     }
 

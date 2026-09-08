@@ -26,6 +26,8 @@ struct MediaExtractView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
                 .padding(.bottom, 28)
+                .animation(UIAnimation.easeOut, value: viewModel.importedFileURL != nil)
+                .animation(UIAnimation.easeOut, value: viewModel.outputURL != nil)
             }
             .background(Color.black)
             .navigationTitle("Extract")
@@ -57,13 +59,6 @@ struct MediaExtractView: View {
             } message: {
                 Text(viewModel.errorMessage ?? "Select a supported video file.")
             }
-            .overlay(alignment: .bottom) {
-                if let message = viewModel.successPopupMessage {
-                    ToastBanner(message: message)
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 10)
-                }
-            }
         }
     }
 
@@ -72,9 +67,6 @@ struct MediaExtractView: View {
             Text("Extract streams")
                 .font(.system(.largeTitle, design: .default).weight(.bold))
                 .foregroundStyle(.white)
-            Text("Keep audio or video only. Nothing extra.")
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.60))
         }
     }
 
@@ -88,7 +80,7 @@ struct MediaExtractView: View {
                 Text(viewModel.statusMessage.isEmpty ? "Tap to import source" : viewModel.statusMessage).font(.footnote).foregroundStyle(.white.opacity(0.60))
             }.frame(maxWidth: .infinity).frame(minHeight: 210).padding(24).background(.white.opacity(0.03), in: RoundedRectangle(cornerRadius: 24, style: .continuous)).overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(.white.opacity(0.08), lineWidth: 1))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressableCard)
         .disabled(viewModel.isAnalyzing || viewModel.isExtracting)
     }
 

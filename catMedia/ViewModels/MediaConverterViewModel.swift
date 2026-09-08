@@ -18,7 +18,6 @@ final class MediaConverterViewModel: ObservableObject {
     @Published private(set) var latestCommand: String?
     @Published private(set) var commandHistory: [String] = []
     @Published private(set) var executionLogLines: [String] = []
-    @Published var successPopupMessage: String?
     @Published var errorMessage: String?
 
     private var lastProgressUpdate = Date.distantPast
@@ -64,7 +63,6 @@ final class MediaConverterViewModel: ObservableObject {
         outputURL = nil
         outputSaveMessage = nil
         errorMessage = nil
-        successPopupMessage = nil
         statusMessage = "Preparing conversion..."
         setExecutionPipeline(preparingPercent: 0, status: "Processing")
 
@@ -120,7 +118,6 @@ final class MediaConverterViewModel: ObservableObject {
             outputURL = result.outputURL
             outputSaveMessage = "Saved in catMedia: \(directOutput.storageDirectoryURL.path)"
             latestCommand = result.commandDescription
-            successPopupMessage = "Successfully Converted (Output Save in your file)"
             statusMessage = "Conversion complete."
             setExecutionPipeline(preparingPercent: 100, status: "Success")
         } catch {
@@ -170,7 +167,6 @@ final class MediaConverterViewModel: ObservableObject {
         latestCommand = nil
         executionLogLines = []
         lastProgressUpdate = .distantPast
-        successPopupMessage = nil
         errorMessage = nil
     }
 

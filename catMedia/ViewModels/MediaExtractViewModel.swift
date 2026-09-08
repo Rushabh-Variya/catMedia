@@ -14,7 +14,6 @@ final class MediaExtractViewModel: ObservableObject {
     @Published private(set) var outputSaveMessage: String?
     @Published private(set) var latestCommand: String?
     @Published private(set) var executionLogLines: [String] = []
-    @Published var successPopupMessage: String?
     @Published var errorMessage: String?
 
     private var lastProgressUpdate = Date.distantPast
@@ -126,7 +125,6 @@ final class MediaExtractViewModel: ObservableObject {
             self.outputURL = result.outputURL
             outputSaveMessage = "Saved in catMedia: \(directOutput.storageDirectoryURL.path)"
             latestCommand = result.commandDescription
-            successPopupMessage = "Successfully Extracted (Output Save in your file)"
             statusMessage = "Extraction complete."
             setExecutionPipeline(preparingPercent: 100, status: "Success")
         } catch {
@@ -148,7 +146,6 @@ final class MediaExtractViewModel: ObservableObject {
         latestCommand = nil
         executionLogLines = []
         lastProgressUpdate = .distantPast
-        successPopupMessage = nil
         errorMessage = nil
     }
 
